@@ -3,9 +3,9 @@ import json
 from bs4 import BeautifulSoup
 import pandas as pd
 
-n_users = input("\nNumber of Users: ")
+n_users = int(input("Number of Users: "))
 row_limit = 1000
-wait = input("Time to Wait: ")
+wait = int(input("Time to Wait: "))
 
 list_data = pd.read_csv('list_data.csv')
 l_rows = list_data.shape[0]
@@ -36,7 +36,8 @@ for user in to_visit:
     if 'data' not in response:
         continue
     for row in response['data']:
-        ID, title, picture = row['node'].values()
+        try:    ID, title, picture = row['node'].values()
+        except: pass
         medium, large = picture.values()
         status = row['list_status']['status']
         score = row['list_status']['score']
