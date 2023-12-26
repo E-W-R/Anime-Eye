@@ -3,9 +3,9 @@ import json
 from bs4 import BeautifulSoup
 import pandas as pd
 
-n_users = 10
+n_users = input("\nNumber of Users: ")
 row_limit = 1000
-wait = 3
+wait = input("Time to Wait: ")
 
 list_data = pd.read_csv('list_data.csv')
 l_rows = list_data.shape[0]
