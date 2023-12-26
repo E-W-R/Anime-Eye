@@ -31,7 +31,8 @@ row_list = []
 print('\nGetting User Data:')
 for user in to_visit:
     response = requests.get(url(user), headers = {'Authorization' : 'Bearer ' + access_token})
-    response = response.json()
+    try:    response = response.json()
+    except: continue
     if 'data' not in response:
         continue
     for row in response['data']:
