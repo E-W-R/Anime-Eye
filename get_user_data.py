@@ -58,5 +58,5 @@ df = pd.DataFrame(row_list)
 df.index += l_rows
 list_data = pd.concat([list_data, df], ignore_index = True)
 
-anime_data.to_csv('anime_data.csv')
-list_data.to_csv('list_data.csv')
+anime_data.to_csv('anime_data.csv', index = False)
+list_data.to_csv('list_data.csv', index = False)
