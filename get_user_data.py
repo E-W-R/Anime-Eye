@@ -27,7 +27,6 @@ with open('token.json') as f:
 def url(user):
     return f'https://api.myanimelist.net/v2/users/{user}/animelist?fields=list_status&limit={row_limit}'
 
-i = l_rows
 row_list = []
 print('\nGetting User Data:')
 for user in to_visit:
@@ -49,10 +48,10 @@ for user in to_visit:
             pd.DataFrame({'id': ID, 'title': title, 'medium_picture': medium, 'large_picture': large}, index = [0])],
             ignore_index = True)
             anime_ids.add(ID)
-    logged_users.add(user)
+    logged_users.add(user + '\n')
     print(user)
 
-with open('logged_users', 'w') as f:
+with open('logged_users.txt', 'w') as f:
     f.writelines(list(logged_users))
 
 df = pd.DataFrame(row_list)
