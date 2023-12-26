@@ -3,9 +3,9 @@ import json
 from bs4 import BeautifulSoup
 import pandas as pd
 
-n_users = int(input("Number of Users: "))
+n_users = int(input('\nNumber of Users: '))
 row_limit = 1000
-wait = int(input("Time to Wait: "))
+wait = float(input('Time to Wait: '))
 
 list_data = pd.read_csv('list_data.csv')
 l_rows = list_data.shape[0]
@@ -48,11 +48,11 @@ for user in to_visit:
             pd.DataFrame({'id': ID, 'title': title, 'medium_picture': medium, 'large_picture': large}, index = [0])],
             ignore_index = True)
             anime_ids.add(ID)
-    logged_users.add(user + '\n')
+    logged_users.add(user)
     print(user)
 
 with open('logged_users.txt', 'w') as f:
-    f.writelines(list(logged_users))
+    f.writelines([s + '\n' for s in list(logged_users)])
 
 df = pd.DataFrame(row_list)
 df.index += l_rows
