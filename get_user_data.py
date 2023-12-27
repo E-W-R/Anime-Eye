@@ -2,6 +2,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import pandas as pd
+import time
 
 n_users = int(input('\nNumber of Users: '))
 row_limit = 1000
@@ -30,17 +31,20 @@ def url(user):
 row_list = []
 print('\nGetting User Data:')
 for user in to_visit:
+    time.sleep(wait)
     response = requests.get(url(user), headers = {'Authorization' : 'Bearer ' + access_token})
     try:    response = response.json()
     except: continue
     if 'data' not in response:
         continue
     for row in response['data']:
-        try:    ID, title, picture = row['node'].values()
-        except: pass
-        medium, large = picture.values()
-        status = row['list_status']['status']
-        score = row['list_status']['score']
+        try:
+            ID, title, picture = row['node'].values()
+            medium, large = picture.values()
+            status = row['list_status']['status']
+            score = row['list_status']['score']
+        except:
+            continue
         if status == 'plan_to_watch' or score == 0:
             continue
         row_list.append({'user': user, 'id': ID, 'status': status, 'score': score})
