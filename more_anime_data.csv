@@ -1,0 +1,31 @@
+id,start_date,end_date,mean,num_list_users,nsfw,media_type,num_episodes,rating,title,picture,prequel
+9919,2011-04-17,2011-10-02,7.49,1894651,white,tv,25,pg_13,Blue Exorcist,https://cdn.myanimelist.net/images/anime/10/75195l.jpg,False
+33506,2017-01-07,2017-03-25,7.35,746731,white,tv,12,pg_13,Blue Exorcist: Kyoto Saga,https://cdn.myanimelist.net/images/anime/5/85201l.jpg,True
+2251,2007-07-27,2007-11-02,8.36,895762,white,tv,13,r,Baccano!,https://cdn.myanimelist.net/images/anime/3/14547l.jpg,False
+31043,2016-01-08,2016-03-25,8.3,2052880,white,tv,12,r,ERASED,https://cdn.myanimelist.net/images/anime/10/77957l.jpg,False
+34566,2017-04-05,2023-03-26,6.04,850126,white,tv,293,pg_13,Boruto: Naruto Next Generations,https://cdn.myanimelist.net/images/anime/1091/99847l.jpg,True
+28755,2015-08-07,2015-08-07,7.39,458879,white,movie,1,pg_13,Boruto: Naruto the Movie,https://cdn.myanimelist.net/images/anime/4/78280l.jpg,True
+44511,2022-10-12,2022-12-28,8.53,1420776,white,tv,12,r,Chainsaw Man,https://cdn.myanimelist.net/images/anime/1806/126216l.jpg,False
+1575,2006-10-06,2007-07-29,8.7,2210998,white,tv,25,r,Code Geass: Lelouch of the Rebellion,https://cdn.myanimelist.net/images/anime/1032/135088l.jpg,False
+2904,2008-04-06,2008-09-28,8.91,1748514,white,tv,25,r,Code Geass: Lelouch of the Rebellion R2,https://cdn.myanimelist.net/images/anime/1088/135089l.jpg,True
+1,1998-04-03,1999-04-24,8.75,1827953,white,tv,26,r,Cowboy Bebop,https://cdn.myanimelist.net/images/anime/4/19644l.jpg,False
+1535,2006-10-04,2007-06-27,8.62,3823743,white,tv,37,r,Death Note,https://cdn.myanimelist.net/images/anime/1079/138100l.jpg,False
+38668,2020-01-13,2020-03-30,8.05,531061,white,tv,12,r,Dorohedoro,https://cdn.myanimelist.net/images/anime/1740/104786l.jpg,False
+5114,2009-04-05,2010-07-04,9.09,3275085,white,tv,64,r,Fullmetal Alchemist: Brotherhood,https://cdn.myanimelist.net/images/anime/1208/94745l.jpg,False
+136,1999-10-16,2001-03-31,8.41,580751,white,tv,62,pg_13,Hunter x Hunter,https://cdn.myanimelist.net/images/anime/1305/132237l.jpg,False
+11061,2011-10-02,2014-09-24,9.04,2758605,white,tv,148,pg_13,Hunter x Hunter,https://cdn.myanimelist.net/images/anime/1337/99013l.jpg,False
+40748,2020-10-03,2021-03-27,8.62,2422186,white,tv,24,r,Jujutsu Kaisen,https://cdn.myanimelist.net/images/anime/1171/109222l.jpg,True
+34933,2017-07-01,2017-09-23,7.24,1455839,white,tv,12,r,Kakegurui,https://cdn.myanimelist.net/images/anime/3/86578l.jpg,False
+38000,2019-04-06,2019-09-28,8.48,2939499,white,tv,26,r,Demon Slayer: Kimetsu no Yaiba,https://cdn.myanimelist.net/images/anime/1286/99889l.jpg,False
+49926,2021-10-10,2021-11-28,8.38,706034,white,tv,7,r,Demon Slayer: Kimetsu no Yaiba Mugen Train Arc,https://cdn.myanimelist.net/images/anime/1065/118763l.jpg,True
+47778,2021-12-05,2022-02-13,8.77,1358003,white,tv,11,r,Demon Slayer: Kimetsu no Yaiba Entertainment District Arc,https://cdn.myanimelist.net/images/anime/1908/120036l.jpg,True
+11771,2012-04-08,2012-09-22,8.06,1185178,white,tv,25,pg_13,Kuroko's Basketball,https://cdn.myanimelist.net/images/anime/11/50453l.jpg,True
+20,2002-10-03,2007-02-08,7.99,2798003,white,tv,220,pg_13,Naruto,https://cdn.myanimelist.net/images/anime/13/17405l.jpg,False
+1735,2007-02-15,2017-03-23,8.26,2429427,white,tv,500,pg_13,Naruto Shippuden,https://cdn.myanimelist.net/images/anime/1565/111305l.jpg,True
+30276,2015-10-05,2015-12-21,8.5,3150947,white,tv,12,r,One Punch Man,https://cdn.myanimelist.net/images/anime/12/76049l.jpg,False
+34134,2019-04-10,2019-07-03,7.51,1649929,white,tv,12,r,One Punch Man Season 2,https://cdn.myanimelist.net/images/anime/1247/122044l.jpg,True
+33255,2016-07-04,2016-12-26,8.41,1076555,white,tv,120,pg_13,The Disastrous Life of Saiki K.,https://cdn.myanimelist.net/images/anime/11/80167l.jpg,False
+16498,2013-04-07,2013-09-29,8.54,3862972,white,tv,25,r,Attack on Titan,https://cdn.myanimelist.net/images/anime/10/47347l.jpg,False
+25777,2017-04-01,2017-06-17,8.51,2658614,white,tv,12,r,Attack on Titan Season 2,https://cdn.myanimelist.net/images/anime/4/84177l.jpg,True
+35760,2018-07-23,2018-10-15,8.62,2305224,white,tv,12,r,Attack on Titan Season 3,https://cdn.myanimelist.net/images/anime/1173/92110l.jpg,True
+38524,2019-04-29,2019-07-01,9.05,2209163,white,tv,10,r,Attack on Titan Season 3 Part 2,https://cdn.myanimelist.net/images/anime/1517/100633l.jpg,True
