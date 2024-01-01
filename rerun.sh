@@ -13,5 +13,5 @@ python_script="$2"
 # Loop to call the Python script n times
 for ((i=1; i<=n; i++)); do
     echo "Calling Python script: $python_script (Run $i)"
-    python "$python_script"
+    python3 "$python_script"
 done
