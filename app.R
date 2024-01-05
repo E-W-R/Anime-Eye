@@ -38,7 +38,10 @@ ui <- fluidPage(
     column(6, style = "padding: 20px",
       imageOutput("eye"),
       
-      textInput("user", "Your MyAnimeList Username:", placeholder = "ex. Evan0", width = "100%"),
+      fluidRow(
+        column(4, textInput("user", "Username", placeholder = "ex. Evan0", width = "100%")),
+        column(8, selectInput("model", "Model", c("User-based collaborative filtering", "Item-based collaborative filtering"), width = "100%"))
+      ),
       actionButton("go", "Generate", width = "100%"),
       
       hr(style = "border-top: 2px solid #000000;"),
@@ -89,12 +92,20 @@ server <- function(input, output) {
   output$pick17 <- renderUI(tags$img(src = my_url, width = "100%", height = "auto"))
   output$pick18 <- renderUI(tags$img(src = my_url, width = "100%", height = "auto"))
 
-  output$roast <- renderText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae posuere tellus. Suspendisse eu feugiat nisi. Quisque feugiat vestibulum purus quis auctor. Aenean non ex purus. Pellentesque ultricies interdum nunc nec tempus. Fusce et augue ut nunc aliquet fringilla et vitae turpis. Etiam nisl sem, varius ut elit id, maximus pulvinar diam. Curabitur eget fringilla sapien. Duis sit amet lectus sed nisl pharetra tincidunt eget id lacus. Fusce vel interdum risus. Aenean nec lectus quis dui posuere tincidunt maximus in quam. Proin tincidunt aliquet metus, ac condimentum ex ultrices sed. Curabitur vestibulum nibh sapien, nec facilisis eros molestie sed.")
+  output$roast <- renderText("Hello, and welcome to the Anime Eye.
+                             The app uses various recommendation algorithms to intelligently recommend anime for you based on what you’ve enjoyed so far. All you need to do is give your MyAnimeList username and press “Generate”.")
+  
+  last_user <- ""
+  load("app.RData")
+  reticulate::source_python("main.py")
   
   observeEvent(input$go, {
-    eye()
-    reticulate::source_python("main.py")
-    out <- main(input$user)
+    vec <- vector(input$user, df)
+    if (input$model == "User-based collaborative filtering") {
+      out <- user_cf(vec, df)
+    } else{
+      out <- item_cf(vec, df)
+    }
     output$pick1 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[3]][1]), target = "_blank", tags$img(src = out[[1]][1], width = "100%", height = "auto", style = "border: 4px solid #000;")))
     output$pick2 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[3]][2]), target = "_blank", tags$img(src = out[[1]][2], width = "100%", height = "auto", style = "border: 4px solid #000;")))
     output$pick3 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[3]][3]), target = "_blank", tags$img(src = out[[1]][3], width = "100%", height = "auto", style = "border: 4px solid #000;")))
@@ -113,7 +124,10 @@ server <- function(input, output) {
     output$pick17 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[4]][7]), target = "_blank", tags$img(src = out[[2]][7], width = "100%", height = "auto", style = "border: 4px solid #000;")))
     output$pick18 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[4]][8]), target = "_blank", tags$img(src = out[[2]][8], width = "100%", height = "auto", style = "border: 4px solid #000;")))
     
-    output$roast <- renderText(out[[5]])
+    if (last_user != input$user) {
+      output$roast <- renderText(message(vec, df))
+      last_user <<- input$user
+    }
   })
 }
 
