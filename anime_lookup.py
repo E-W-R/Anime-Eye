@@ -33,6 +33,7 @@ for ID in anime_dict.keys():
     response = requests.get(url(ID), headers = {'Authorization' : 'Bearer ' + access_token})
     response = response.json()
     has_prequel = 'prequel' in [anime['relation_type'] for anime in response['related_anime']]
+    genres = [genre['name'] for genre in response['genres']] + [""] * 5
     if response['media_type'] not in ['tv', 'movie', 'ona', 'ova']:
         continue
     Row = {key: response[key] for key in ['id', 'start_date', 'end_date',
@@ -42,6 +43,8 @@ for ID in anime_dict.keys():
         Row['title'] = response['title']
     Row['picture'] = response['main_picture']['large']
     Row['prequel'] = has_prequel
+    Row['genre1'], Row['genre2'], Row['genre3'], Row['genre4'], Row['genre5'] = \
+        genres[0], genres[1], genres[2], genres[3], genres[4]
     row_list.append(Row)
     n_anime -= 1
     print(Row['title'])
