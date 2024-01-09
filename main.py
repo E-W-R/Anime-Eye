@@ -3,6 +3,7 @@ import numpy as np
 import requests
 import json
 import sys
+import xgboost as xgb
 import os
 from openai import OpenAI
 
@@ -41,10 +42,10 @@ def user_cf(vec, df):
     ids = [int(ID[1:]) for ID in list(df.columns)]
     score_matrix = df.values
 
-    pr_df = pd.read_csv('more_anime_data.csv')
-    prequel_dict = pr_df[['id', 'prequel']].set_index('id')['prequel'].to_dict()
-    img_dict = pr_df[['id', 'picture']].set_index('id')['picture'].to_dict()
-    eng_dict = pr_df[['id', 'title']].set_index('id')['title'].to_dict()
+    anime_df = pd.read_csv('more_anime_data.csv')
+    prequel_dict = anime_df[['id', 'prequel']].set_index('id')['prequel'].to_dict()
+    img_dict = anime_df[['id', 'picture']].set_index('id')['picture'].to_dict()
+    eng_dict = anime_df[['id', 'title']].set_index('id')['title'].to_dict()
 
     score_matrix = score_matrix[:, vec > 0]
     small_vec = vec[vec > 0]
@@ -94,8 +95,8 @@ def item_cf(vec, df):
     watched = set([ids[i] for i in range(len(vec)) if vec[i] != -1])
     favourites = [ids[i] for i in np.argsort(vec)[::-1][:min(len(vec), 30)]]
 
-    pr_df = pd.read_csv('more_anime_data.csv')
-    type_dict = pr_df[['id', 'media_type']].set_index('id')['media_type'].to_dict()
+    anime_df = pd.read_csv('more_anime_data.csv')
+    type_dict = anime_df[['id', 'media_type']].set_index('id')['media_type'].to_dict()
 
     item_neighbours = pd.read_csv('item_neighbours.csv')
     recc_ids = []
@@ -120,13 +121,57 @@ def item_cf(vec, df):
     return (pics[:8], pics[8:], recc_ids[:8], recc_ids[8:])
 
 
+def forest(vec, df):
+
+    ids = [int(ID[1:]) for ID in list(df.columns)]
+    watched = set([ids[i] for i in range(len(ids)) if not np.isnan(vec[i]) and not vec[i] == 0])
+    scores = [int(vec[i]) for i in range(len(vec)) if not np.isnan(vec[i]) and not vec[i] == 0]
+    score_shift = dict(zip(sorted(list(set(scores))), range(len(set(scores)))))
+    scores = [score_shift[score] for score in scores]
+
+    anime_df = pd.read_csv('more_anime_data.csv')
+    has_prequel = list(anime_df['prequel'])
+    pictures = list(anime_df['picture'])
+    titles = list(anime_df['title'])
+    type_list = list(anime_df['media_type'])
+    ids = list(anime_df['id'])
+    anime_df['start_date'] = [int(date[:4]) for date in anime_df['start_date']]
+    anime_df['title'] = [len(title.split(" ")) for title in anime_df['title']]
+    for col in ['media_type', 'rating', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']:
+       anime_df[col] = anime_df[col].astype('category')
+
+    training_set = anime_df[anime_df['id'].isin(watched)]
+    training_set = training_set.sort_values(by = 'id')
+    training_set = training_set[['start_date', 'media_type', 'mean', 'num_list_users',
+    'num_episodes', 'rating', 'title', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']]
+    dtrain = xgb.DMatrix(training_set, label = scores, enable_categorical = True)
+
+    clf = xgb.train(
+        {'objective': 'multi:softmax', 'num_class': len(set(scores)), 'eval_metric': 'mlogloss'},
+        dtrain,
+        num_boost_round = 100,
+        evals=[(dtrain, 'eval')],
+        early_stopping_rounds = 10,
+        verbose_eval=False
+    )
+
+    pred = xgb.DMatrix(anime_df[['start_date', 'media_type', 'mean', 'num_list_users', 'num_episodes',
+    'rating', 'title', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']], enable_categorical = True)
+    out = np.argsort(clf.predict(pred))
+    valid = [not has_prequel[i] and ids[i] not in watched and type_list[i] != "ova" for i in range(len(out))]
+    pics = [pictures[i] for i in out if valid[i]]
+    recc_ids = [ids[i] for i in out if valid[i]]
+
+    return (pics[:8], pics[8:16], recc_ids[:8], recc_ids[8:16])
+
+
 def message(vec, df):
 
     ids = [int(ID[1:]) for ID in list(df.columns)]
-    pr_df = pd.read_csv('more_anime_data.csv')
-    eng_dict = pr_df[['id', 'title']].set_index('id')['title'].to_dict()
+    anime_df = pd.read_csv('more_anime_data.csv')
+    eng_dict = anime_df[['id', 'title']].set_index('id')['title'].to_dict()
 
-    os.environ["OPENAI_API_KEY"] = "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"
+    os.environ["OPENAI_API_KEY"] = "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"
 
     client = OpenAI()
 
