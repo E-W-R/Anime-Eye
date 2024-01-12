@@ -4,6 +4,7 @@ import requests
 import json
 import sys
 import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier
 import os
 from openai import OpenAI
 
@@ -139,6 +140,46 @@ def forest(vec, df):
     ids = list(anime_df['id'])
     anime_df['start_date'] = [int(date[:4]) for date in anime_df['start_date']]
     anime_df['title'] = [len(title.split(" ")) for title in anime_df['title']]
+
+    training_set = anime_df[anime_df['id'].isin(watched)]
+    training_set = training_set.sort_values(by = 'id')
+    cols = ['start_date', 'media_type', 'mean', 'num_list_users',
+    'num_episodes', 'rating', 'title', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']
+    cat_cols = ['media_type', 'rating', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']
+    training_set = training_set[cols]
+    training_set = pd.get_dummies(training_set, columns = cat_cols)
+    anime_df = pd.get_dummies(anime_df, columns = cat_cols)
+    anime_df = anime_df[training_set.columns]
+
+    clf = RandomForestClassifier(n_estimators = 100, random_state = 1102)
+    clf.fit(training_set, scores)
+    pred = clf.predict(anime_df)
+    out = np.argsort(pred)
+    valid = [not has_prequel[i] and ids[i] not in watched and type_list[i] != "ova" for i in range(len(out))]
+    pics = [pictures[i] for i in out if valid[i]]
+    recc_ids = [ids[i] for i in out if valid[i]]
+
+    return (pics[:8], pics[8:16], recc_ids[:8], recc_ids[8:16])
+
+
+def boosting(vec, df):
+
+    anime_df = pd.read_csv('more_anime_data.csv')
+    db_ids = set(anime_df['id'])
+
+    ids = [int(ID[1:]) for ID in list(df.columns)]
+    watched = [ids[i] for i in range(len(ids)) if not np.isnan(vec[i]) and not vec[i] == 0 and ids[i] in db_ids]
+    scores = [int(vec[i]) for i in range(len(vec)) if not np.isnan(vec[i]) and not vec[i] == 0 and ids[i] in db_ids]
+    score_shift = dict(zip(sorted(list(set(scores))), range(len(set(scores)))))
+    scores = [score_shift[score] for score in scores]
+
+    has_prequel = list(anime_df['prequel'])
+    pictures = list(anime_df['picture'])
+    titles = list(anime_df['title'])
+    type_list = list(anime_df['media_type'])
+    ids = list(anime_df['id'])
+    anime_df['start_date'] = [int(date[:4]) for date in anime_df['start_date']]
+    anime_df['title'] = [len(title.split(" ")) for title in anime_df['title']]
     for col in ['media_type', 'rating', 'genre1', 'genre2', 'genre3', 'genre4', 'genre5']:
        anime_df[col] = anime_df[col].astype('category')
 
@@ -173,7 +214,7 @@ def message(vec, df):
     anime_df = pd.read_csv('more_anime_data.csv')
     eng_dict = anime_df[['id', 'title']].set_index('id')['title'].to_dict()
 
-    os.environ["OPENAI_API_KEY"] = ...
+    os.environ["OPENAI_API_KEY"] = "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"
 
     client = OpenAI()
 
