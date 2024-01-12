@@ -40,7 +40,7 @@ ui <- fluidPage(
       
       fluidRow(
         column(4, textInput("user", "Username", placeholder = "ex. Evan0", width = "100%")),
-        column(8, selectInput("model", "Model", c("User-based collaborative filtering", "Item-based collaborative filtering"), width = "100%"))
+        column(8, selectInput("model", "Model", c("User-based collaborative filtering", "Item-based collaborative filtering", "Extreme Gradient Boosting"), width = "100%"))
       ),
       actionButton("go", "Generate", width = "100%"),
       
@@ -97,14 +97,19 @@ server <- function(input, output) {
   
   last_user <- ""
   load("app.RData")
-  reticulate::source_python("main.py")
+  library(reticulate)
+  virtualenv_install("app_env", packages = c('pandas','numpy', 'requests', 'openai', 'xgboost'))
+  use_virtualenv("app_env", required = TRUE)
+  source_python("main.py")
   
   observeEvent(input$go, {
     vec <- vector(input$user, df)
     if (input$model == "User-based collaborative filtering") {
       out <- user_cf(vec, df)
-    } else{
+    } else if (input$model == "Item-based collaborative filtering") {
       out <- item_cf(vec, df)
+    } else {
+      out <- forest(vec, df)
     }
     output$pick1 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[3]][1]), target = "_blank", tags$img(src = out[[1]][1], width = "100%", height = "auto", style = "border: 4px solid #000;")))
     output$pick2 <- renderUI(tags$a(href = paste0("https://myanimelist.net/anime/", out[[3]][2]), target = "_blank", tags$img(src = out[[1]][2], width = "100%", height = "auto", style = "border: 4px solid #000;")))

@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 import json
 import sys
@@ -123,13 +123,15 @@ def item_cf(vec, df):
 
 def forest(vec, df):
 
+    anime_df = pd.read_csv('more_anime_data.csv')
+    db_ids = set(anime_df['id'])
+
     ids = [int(ID[1:]) for ID in list(df.columns)]
-    watched = set([ids[i] for i in range(len(ids)) if not np.isnan(vec[i]) and not vec[i] == 0])
-    scores = [int(vec[i]) for i in range(len(vec)) if not np.isnan(vec[i]) and not vec[i] == 0]
+    watched = [ids[i] for i in range(len(ids)) if not np.isnan(vec[i]) and not vec[i] == 0 and ids[i] in db_ids]
+    scores = [int(vec[i]) for i in range(len(vec)) if not np.isnan(vec[i]) and not vec[i] == 0 and ids[i] in db_ids]
     score_shift = dict(zip(sorted(list(set(scores))), range(len(set(scores)))))
     scores = [score_shift[score] for score in scores]
 
-    anime_df = pd.read_csv('more_anime_data.csv')
     has_prequel = list(anime_df['prequel'])
     pictures = list(anime_df['picture'])
     titles = list(anime_df['title'])
@@ -171,7 +173,7 @@ def message(vec, df):
     anime_df = pd.read_csv('more_anime_data.csv')
     eng_dict = anime_df[['id', 'title']].set_index('id')['title'].to_dict()
 
-    os.environ["OPENAI_API_KEY"] = "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"
+    os.environ["OPENAI_API_KEY"] = ...
 
     client = OpenAI()
 
@@ -186,8 +188,8 @@ def message(vec, df):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "Your job is to make fun of people for their tastes in anime. Be creative and deliver a paragraph of quippy and snarky roasts. DO NOT reference any specific anime in your reply. Be personal, clever, relevant, and short."},
-        {"role": "user", "content": "Here are my favourite anime, roast me. Do not refer to any of the anime in your reply. Be rude, clever, and don't hold back.\n" + ", ".join(fav)}
+        {"role": "system", "content": "Your job is to make fun of people for their tastes in anime. Be creative and deliver a paragraph of quippy and snarky roasts. DO NOT mention any anime titles."},
+        {"role": "user", "content": "Here are my favourite anime, roast me. Please do not refer to any of the anime that I watched in your reply. Just meake fun of general trends. Be rude, clever, and don't hold back.\n\n" + ", ".join(fav)}
     ]
     )
 
