@@ -3,24 +3,24 @@ import json
 import pandas as pd
 import time
 
-n_users = int(input('\nNumber of Users: '))
+n_users = 5
 row_limit = 1000
-wait = float(input('Time to Wait: '))
+wait = 3
 
-list_data = pd.read_csv('list_data.csv')
+list_data = pd.read_csv('users/1.csv', index_col = 0)
 l_rows = list_data.shape[0]
-anime_data = pd.read_csv('anime_data.csv')
-anime_ids = set(anime_data['id'])
 
-with open('logged_users.txt') as f:
+with open('anime_ids.txt', 'r') as f:
+    anime_ids = set(f.readlines())
+with open('logged_users.txt', 'r') as f:
     logged_users = [l.strip() for l in f.readlines()]
     logged_users = set(logged_users)
-with open('usernames.txt') as f:
+with open('usernames.txt', 'r') as f:
     usernames = [l.strip() for l in f.readlines()]
     usernames = set(usernames)
 to_visit = list(usernames - logged_users)[:n_users]
 
-with open('token.json') as f:
+with open('token.json', 'r') as f:
     data = json.load(f)
     access_token = data['access_token']
 
@@ -28,6 +28,7 @@ def url(user):
     return f'https://api.myanimelist.net/v2/users/{user}/animelist?fields=list_status&limit={row_limit}'
 
 row_list = []
+usernames = []
 print('\nGetting User Data:')
 for user in to_visit:
     time.sleep(wait)
@@ -36,31 +37,33 @@ for user in to_visit:
     except: continue
     if 'data' not in response:
         continue
+    user_row = {}
     for row in response['data']:
         try:
             ID, title, picture = row['node'].values()
-            medium, large = picture.values()
             status = row['list_status']['status']
             score = row['list_status']['score']
         except:
             continue
+        if ID not in anime_ids:
+            anime_ids.add(ID)
         if status == 'plan_to_watch' or score == 0:
             continue
-        row_list.append({'user': user, 'id': ID, 'status': status, 'score': score})
-        if ID not in anime_ids:
-            anime_data = pd.concat([anime_data,
-            pd.DataFrame({'id': ID, 'title': title, 'medium_picture': medium, 'large_picture': large}, index = [0])],
-            ignore_index = True)
-            anime_ids.add(ID)
+        user_row[ID] = score
     logged_users.add(user)
+    if user_row:
+        row_list.append(user_row)
+        usernames.append(user)
     print(user)
+
+df = pd.DataFrame(row_list, index = usernames)
+# df.index += l_rows
+list_data = pd.concat([list_data, df], ignore_index = False)
+
+list_data.to_csv('users/1.csv', index = True)
 
 with open('logged_users.txt', 'w') as f:
     f.writelines([s + '\n' for s in list(logged_users)])
 
-df = pd.DataFrame(row_list)
-df.index += l_rows
-list_data = pd.concat([list_data, df], ignore_index = True)
-
-anime_data.to_csv('anime_data.csv', index = False)
-list_data.to_csv('list_data.csv', index = False)
+with open('anime_ids.txt', 'w') as f:
+    f.writelines([str(s) + '\n' for s in list(anime_ids)])
